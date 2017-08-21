@@ -84,11 +84,8 @@ namespace Gluon
             var properties = T.GetProperties();
             foreach (var propertyInfo in properties)
             {
-                if (propertyInfo.Name != "Return")
-                {
-                    object value = Convert.ChangeType(String.Format("{0}", propertyInfo.Name.ToUpper()), propertyInfo.PropertyType);
-                    propertyInfo.SetValue(null, value, null);
-                }
+                object value = Convert.ChangeType(String.Format("{0}", propertyInfo.Name.ToUpper()), propertyInfo.PropertyType);
+                propertyInfo.SetValue(null, value, null);
             }
         }
 

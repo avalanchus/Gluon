@@ -5,6 +5,8 @@ VisualStudioVersion = 12.0.40629.0
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Gluon", "Gluon\Gluon.csproj", "{B0201DBF-2E2B-440F-AD55-D9E8BFD19353}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "GluonTest", "GluonTest\GluonTest.csproj", "{8F889793-F24E-474F-984D-B5747D2D7612}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -15,6 +17,10 @@ Global
 		{B0201DBF-2E2B-440F-AD55-D9E8BFD19353}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{B0201DBF-2E2B-440F-AD55-D9E8BFD19353}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{B0201DBF-2E2B-440F-AD55-D9E8BFD19353}.Release|Any CPU.Build.0 = Release|Any CPU
+		{8F889793-F24E-474F-984D-B5747D2D7612}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{8F889793-F24E-474F-984D-B5747D2D7612}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{8F889793-F24E-474F-984D-B5747D2D7612}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{8F889793-F24E-474F-984D-B5747D2D7612}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

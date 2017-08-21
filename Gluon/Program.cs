@@ -1,4 +1,6 @@
-﻿namespace Gluon
+﻿using System;
+
+namespace Gluon
 {
     class Program
     {

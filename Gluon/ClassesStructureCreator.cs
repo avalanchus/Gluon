@@ -4,6 +4,7 @@ using System.Configuration;
 using System.IO;
 using System.Linq;
 using Microsoft.Build.Evaluation;
+using Microsoft.CSharp;
 using Microsoft.TeamFoundation.Client;
 using Microsoft.TeamFoundation.VersionControl.Client;
 
@@ -13,7 +14,7 @@ namespace Gluon
     {
         #region Private Members
 
-        public const string ReturnVal = "returnval";
+        public const string ReturnVal = "return";
         public const string HelpersFileName = "_Helpers.cs";
         public const string DefaultHelperNamespace = "Gluon";
         public const string CompileProjectItemType = "Compile";
@@ -58,6 +59,18 @@ namespace Gluon
         }
 
         /// <summary>
+        ///     Getting valid name value of incoming name from the point of view C#
+        /// </summary>
+        /// <param name="incomingName"> Incoming name (class, proc or arg) </param>
+        /// <returns> Valid name </returns>
+        private string GetValidName(string incomingName)
+        {
+            CSharpCodeProvider cs = new CSharpCodeProvider();
+            var validName = cs.IsValidIdentifier(incomingName) ? incomingName : "@" + incomingName;
+            return validName;
+        }
+
+        /// <summary>
         ///     Creating of the list of strings describing class with properties
         /// </summary>
         /// <param name="attributeClause"> [FullSelfDescriptedClass] or [SelfDescriptedClass]</param>
@@ -75,27 +88,19 @@ namespace Gluon
                 {
                     "",
                     IndentLevelToStr(indentLevel) + attributeClause,
-                    IndentLevelToStr(indentLevel) + String.Format("public class {0}", _class.Key.ToUpper()),
+                    IndentLevelToStr(indentLevel) + String.Format("public class {0}", GetValidName(_class.Key).ToUpper()),
                     IndentLevelToStr(indentLevel) + "{",
                     IndentLevelToStr(indentLevel + 1) +
-                    String.Format("static {0}() {{ Initializer.Init<{0}>(); }}", _class.Key.ToUpper())
+                    String.Format("static {0}() {{ Initializer.Init<{0}>(); }}", GetValidName(_class.Key).ToUpper())
                 };
 
                 var classBody =
                     _class.Value
-                        .Where(s => s != ReturnVal)
                         .Select(
                             s =>
                                 IndentLevelToStr(indentLevel + 1) +
-                                String.Format("public static string {0} {{ get; set; }}", s.ToCapital()))
+                                String.Format("public static string {0} {{ get; set; }}", GetValidName(s).ToCapital()))
                         .ToList();
-                var retunClause = _class.Value.FirstOrDefault(s => s == ReturnVal);
-                if (retunClause != null)
-                {
-                    classBody.Add(IndentLevelToStr(indentLevel + 1) +
-                                  String.Format("public static string {0} {{ get {{ return \"return\"; }} }}",
-                                      _commonConfigSection.StoredProcReturnName));
-                }
                 if (closingBrace)
                     classBody.Add(IndentLevelToStr(indentLevel) + "}");
                 body.AddRange(header);
@@ -120,7 +125,7 @@ namespace Gluon
 
             var packageClass = CreateClasses(FullSelfDescClassAttrClause,
                 new Dictionary<string, List<string>> {{packageName, procedures.Keys.ToList()}}, 1, false);
-            var proceduresClasses = CreateClasses(FullSelfDescClassAttrClause, procedures, 2);
+            var proceduresClasses = CreateClasses(SelfDescClassAttrClause, procedures, 2);
             body.AddRange(packageClass);
             body.AddRange(proceduresClasses);
             body.Add(IndentLevelToStr(1) + "}");
@@ -175,7 +180,7 @@ namespace Gluon
             helperBody = helperBody.Replace(DefaultHelperNamespace,
                 String.Format("{0}.{1}", _commonConfigSection.TargetProjectNameSpace, _commonConfigSection.Namespace));
             // Replacing substring "Return" in body of _Helpers.cs on name specified in config
-            helperBody = helperBody.Replace("Return", _commonConfigSection.StoredProcReturnName);
+            //helperBody = helperBody.Replace("Return", _commonConfigSection.StoredProcReturnName);
             var helperFullFileName = Path.Combine(_destinatonFolderPath, HelpersFileName);
             var isTheSameFile = File.Exists(helperFullFileName) && File.ReadAllText(helperFullFileName) == helperBody;
             if (!isTheSameFile)
